@@ -72,6 +72,10 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    # Login to terraform
+    - name: Export tf credentials
+      run: echo $TF_CREDENTIALS > ~/.terraformrc
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
