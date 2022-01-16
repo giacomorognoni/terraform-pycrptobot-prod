@@ -12,7 +12,7 @@ terraform {
     organization = "giacomo-private"
 
     workspaces {
-      prefix = "pycryptobot-prod"
+      prefix = "pycryptobot-"
     }
   }
 }

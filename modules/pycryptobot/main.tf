@@ -1,54 +1,69 @@
+# ECS CLUSTER DECLARATION
+
 resource "aws_ecs_cluster" "pycryptobot_cluster" {
-  name = "pycryptobot_cluster"
-  
+  name               = "pycryptobot_cluster"
+  capacity_providers = ["FARGATE"]
 }
+
+# ECR REPO DECLARATION
+
+resource "aws_ecr_repository" "main" {
+  name = "giacomo.rognoni/pycryptobot/${var.name}"
+}
+
+# ECR LIFECYCLE INGESTION POLICY
+
+resource "aws_ecr_lifecycle_policy" "main" {
+  repository = aws_ecr_repository.main.name
+
+  policy = <<EOF
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Keep last 10 images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 10
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+EOF
+}
+
+# ECS SERVICE DECLARATION
 
 resource "aws_ecs_service" "pycryptobot1" {
-  name            = "${var.name}"
-  cluster         = "pycryptobot_cluster"
-  task_definition = ""
-  desired_count   = "${var.desired_count}"
-  iam_role        = "${aws_iam_role.ecs_role.arn}"
+  name            = var.name
+  cluster         = aws_ecs_cluster.pycryptobot_cluster.id
+  task_definition = aws_ecs_task_definition.service.arn
+  desired_count   = var.desired_count
+  launch_type     = "FARGATE"
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
+
 }
 
+# ECS TASK DEFINTIION
 resource "aws_ecs_task_definition" "service" {
-  family = "service"
+  family                   = var.name
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = 512
+  memory                   = 1024
+  execution_role_arn       = aws_iam_role.ecs_role.arn
+  task_role_arn            = aws_iam_role.ecs_task.arn
   container_definitions = jsonencode([
     {
-      name      = "first"
-      image     = "service-first"
-      cpu       = 10
-      memory    = 512
+      name      = "${var.name}"
+      image     = "public.ecr.aws/ubuntu/redis:latest"
       essential = true
-      portMappings = [
-        {
-          containerPort = 80
-          hostPort      = 80
-        }
-      ]
-    },
-    {
-      name      = "second"
-      image     = "service-second"
-      cpu       = 10
-      memory    = 256
-      essential = true
-      portMappings = [
-        {
-          containerPort = 443
-          hostPort      = 443
-        }
-      ]
-    }
-  ])
-
-  volume {
-    name      = "service-storage"
-    host_path = "/ecs/service-storage"
-  }
-
-  placement_constraints {
-    type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in [us-west-2a, us-west-2b]"
-  }
+  }])
 }

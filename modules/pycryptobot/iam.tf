@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "ecs_task_execution_policy" {
     ]
 
     resources = [
-        "*"
+      "*"
     ]
   }
 }
@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "ecs_task_permissions" {
   statement {
     effect = "Allow"
     actions = [
-      "s3:*"]
+    "s3:*"]
     resources = ["*"]
   }
 }
