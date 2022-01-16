@@ -66,4 +66,5 @@ resource "aws_ecs_task_definition" "service" {
       image     = "public.ecr.aws/ubuntu/redis:latest"
       essential = true
   }])
+  
 }
