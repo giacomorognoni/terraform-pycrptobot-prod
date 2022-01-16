@@ -74,9 +74,9 @@ jobs:
 
     # Login to terraform
     - name: Export tf credentials
-      run: 
-        - echo $TF_CREDENTIALS > ~/.terraformrc
-        - terraform init
+      run: |
+        echo $TF_CREDENTIALS > ~/.terraformrc
+        terraform init
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
