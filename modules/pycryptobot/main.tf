@@ -1,14 +1,14 @@
 resource "aws_ecs_cluster" "pycryptobot_cluster" {
   name = "pycryptobot_cluster"
-  
+
 }
 
 resource "aws_ecs_service" "pycryptobot1" {
-  name            = "${var.name}"
+  name            = var.name
   cluster         = "pycryptobot_cluster"
   task_definition = ""
-  desired_count   = "${var.desired_count}"
-  iam_role        = "${aws_iam_role.ecs_role.arn}"
+  desired_count   = var.desired_count
+  iam_role        = aws_iam_role.ecs_role.arn
 }
 
 resource "aws_ecs_task_definition" "service" {
