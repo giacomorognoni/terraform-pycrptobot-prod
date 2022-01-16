@@ -2,7 +2,7 @@
 
 resource "aws_ecs_cluster" "pycryptobot_cluster" {
   name               = "pycryptobot_cluster"
-  capacity_providers = ["FARGATE"]
+  #capacity_providers = ["FARGATE"]
 }
 
 # ECR REPO DECLARATION
@@ -43,7 +43,7 @@ resource "aws_ecs_service" "pycryptobot1" {
   cluster         = aws_ecs_cluster.pycryptobot_cluster.id
   task_definition = aws_ecs_task_definition.service.arn
   desired_count   = var.desired_count
-  launch_type     = "FARGATE"
+  #launch_type     = "FARGATE"
 
   lifecycle {
     ignore_changes = [task_definition]
@@ -55,7 +55,7 @@ resource "aws_ecs_service" "pycryptobot1" {
 resource "aws_ecs_task_definition" "service" {
   family                   = var.name
   network_mode             = "none"
-  requires_compatibilities = ["FARGATE"]
+  #requires_compatibilities = ["FARGATE"]
   cpu                      = 512
   memory                   = 1024
   execution_role_arn       = aws_iam_role.ecs_role.arn
@@ -66,5 +66,5 @@ resource "aws_ecs_task_definition" "service" {
       image     = "public.ecr.aws/ubuntu/redis:latest"
       essential = true
   }])
-  
+
 }
