@@ -54,7 +54,7 @@ resource "aws_ecs_service" "pycryptobot1" {
 # ECS TASK DEFINTIION
 resource "aws_ecs_task_definition" "service" {
   family                   = var.name
-  network_mode             = "awsvpc"
+  network_mode             = "none"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 512
   memory                   = 1024
