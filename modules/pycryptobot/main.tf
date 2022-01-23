@@ -39,6 +39,7 @@ EOF
 # ECS SERVICE DECLARATION
 
 resource "aws_ecs_service" "pycryptobot1" {
+  count           = length(var.subnets)
   name            = var.name
   cluster         = aws_ecs_cluster.pycryptobot_cluster.id
   task_definition = aws_ecs_task_definition.service.arn
@@ -51,7 +52,7 @@ resource "aws_ecs_service" "pycryptobot1" {
 
   network_configuration {
     security_groups  = [aws_security_group.ecs_tasks.id, var.aws_alb_security_group]
-    subnets          = var.subnets.*.id
+    subnets          = [var.subnets[count.index].id]
     assign_public_ip = false
   }
 

@@ -37,15 +37,15 @@ resource "aws_route" "public" {
 
 resource "aws_route_table_association" "public" {
   count          = length(var.public_subnets)
-  subnet_id      = element(aws_subnet.public.*.id, count.index)
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
 
 # Configure Nat Gateway for outbound traffic
 resource "aws_nat_gateway" "main" {
   count         = var.num_nat_gateways
-  allocation_id = element(aws_eip.nat.*.id, count.index)
-  subnet_id     = element(aws_subnet.public.*.id, count.index)
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = aws_subnet.public[count.index].id
   depends_on    = [aws_internet_gateway.main]
 }
 
@@ -62,15 +62,15 @@ resource "aws_route_table" "private" {
 
 resource "aws_route" "private" {
   count                  = var.num_nat_gateways
-  route_table_id         = element(aws_route_table.private.*.id, count.index)
+  route_table_id         = aws_route_table.private[count.index].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = element(aws_nat_gateway.main.*.id, count.index)
+  nat_gateway_id         = aws_nat_gateway.main[count.index].id
 }
 
 resource "aws_route_table_association" "private" {
   count          = length(var.private_subnets)
-  subnet_id      = element(aws_subnet.private.*.id, count.index)
-  route_table_id = element(aws_route_table.private.*.id, count.index)
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private[count.index].id
 }
 
 # Configure load balancer security groups (ingress tcp port 80 and 443 for http/https)
@@ -175,7 +175,7 @@ module "pycryptobot1" {
   desired_count            = var.desired_count
   environment              = var.environment
   vpc_id                   = aws_vpc.main.id
-  subnets                  = [for subnet in aws_subnet.private : subnet.id]
+  subnets                  = [for subnet in aws_subnet.private : subnet]
   aws_alb_target_group_arn = aws_lb_target_group.main.arn
   aws_alb_security_group   = aws_security_group.alb.id
 }
