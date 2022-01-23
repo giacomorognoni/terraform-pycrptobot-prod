@@ -17,7 +17,7 @@ variable "name" {
 
 variable "cidr_block" {
   type        = string
-  default     = "10.0.0.0/8"
+  default     = "10.0.0.0/16"
   description = "Largest possible cidr block range 10.0.0.0 -> 10.255.255.255"
 }
 
