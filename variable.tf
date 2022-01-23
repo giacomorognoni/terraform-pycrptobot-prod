@@ -43,18 +43,18 @@ variable "az_count" {
 variable "availability_zones" {
   type        = list(any)
   description = "The availability zones for the environment. Examples: eu-west-1a, eu-west-1b"
-  default     = ["eu-west-2a"]
+  default     = ["eu-west-2a", "eu-west-2b"]
 }
 
 variable "subnet_spacing" {
   type        = number
-  default     = 1
+  default     = 0
   description = "Number to use to space out the gaps between subnets, if your using 3 AZs, we recommend setting this to 1"
 }
 
 variable "num_nat_gateways" {
   type        = number
-  default     = 1
+  default     = 2
   description = "The number of NAT Gateways required for the environment. For dev and test this should not be more than 1. For Production, this should equal the number of availability zones. Only appliable for VPCs with an internet gateway"
 }
 

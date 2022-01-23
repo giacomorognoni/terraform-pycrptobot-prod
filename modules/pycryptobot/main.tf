@@ -78,6 +78,16 @@ resource "aws_ecs_task_definition" "service" {
       name      = "${var.name}"
       image     = "public.ecr.aws/ubuntu/redis:latest"
       essential = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort      = 80
+        },
+        {
+          containerPort = 443
+          hostPort      = 443
+        }
+      ]
   }])
 
 }
