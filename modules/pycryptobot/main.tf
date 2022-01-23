@@ -58,7 +58,7 @@ resource "aws_ecs_service" "pycryptobot1" {
 
   load_balancer {
     target_group_arn = var.aws_alb_target_group_arn
-    container_name   = "${var.name}-container-${var.environment}"
+    container_name   = var.name
     container_port   = 0
   }
 
